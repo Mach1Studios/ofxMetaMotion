@@ -8,9 +8,7 @@ meta:
 common:
 
 osx:
-	ADDON_LIBS += libs/lib/osx/libmetawear.dylib
-	ADDON_LIBS += libs/lib/osx/libmetawear.dylib.0
-	ADDON_LIBS += libs/lib/osx/libmetawear.dylib.0.19.1
+	ADDON_LIBS += libs/lib/osx/libmetawear.a
 
 vs:
 
