@@ -1,10 +1,8 @@
 # ofxWitmotion
 
+### WORK IN PROGRESS ###
+
 MetaMotion addon for OpenFrameworks
-
-Ported from the official documentation example C++ code 
-https://github.com/WITMOTION/BWT901CL
-
 
 ## Quick example: 
 
