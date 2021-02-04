@@ -6,12 +6,15 @@ void ofApp::setup()
     ofSetFrameRate(200);
     threadedmmc.setup();
     threadedmmc.start();
+    
+    mmc.setup();
 
 }
 
 //--------------------------------------------------------------
 void ofApp::update()
 {
+    mmc.update();
 }
 
 //--------------------------------------------------------------

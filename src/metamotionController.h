@@ -22,7 +22,7 @@
 #include <sys/time.h>
 #endif
 
-#include "nativebleController.h"
+#include "nativebleInterface.h"
 
 #include "metawear/core/metawearboard.h"
 #include "metawear/core/module.h"
@@ -55,13 +55,10 @@ public:
     void disconnectDevice();
     
     // get functions for data
-    float* getAcceleration();
-    float* getGyro();
-    float* getAngle();
-    float* getMagneticField();
+    float* getEulerAngle();
     
     // ble
-    nativebleController nativeble;
+    nativebleInterface nativeble;
     std::vector<NativeBLE::DeviceDescriptor> devices;
     
     void data_printer(void* context, const MblMwData* data);

@@ -4,6 +4,11 @@
 
 MetaMotion addon for OpenFrameworks
 
+## Setup
+
+#### MacOS
+- Add `CoreBluetooth.framework` to the project's target Frameworks within the xcodeproj
+
 ## Quick example: 
 
 `ofApp.h`
@@ -21,8 +26,5 @@ MetaMotion addon for OpenFrameworks
     
     // in ofApp::update()
     mmc.update();
-    mmc.getAcceleration();
-    mmc.getGyro();
-    mmc.getAngle();
-    mmc.getMagneticField();
+    mmc.getEulerAngle();
 ```

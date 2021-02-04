@@ -23,12 +23,26 @@ metamotionController::~metamotionController() {
 //----------------------------------------------------- setup.
 void metamotionController::setup() {
     //getDeviceIDs();
+    nativeble.listDevices();
     isConnected = false;
     resetOrientation();
 }
 
 void metamotionController::update(){
-    if(isConnected){
+    if (nativeble.devices.size() < 1) { // keep checking for devices if there are none found
+        nativeble.listDevices();
+    } else {
+        while (!nativeble.connected) { // wait for commandline input prompt of device to connect to
+            int device;
+            std::cin >> device;
+            if (device >= nativeble.devices.size()) {
+                std::cout << "Device index out of range." << std::endl;
+            }
+            nativeble.connect(device);
+        }
+    }
+    
+    if(isConnected){ // when connected section
     }
 }
 

@@ -21,6 +21,7 @@ public:
 
     void setup(){
         start();
+        
     }
 
     /// Start the thread.
