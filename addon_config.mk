@@ -9,7 +9,7 @@ common:
 
 osx:
 	ADDON_LIBS += libs/lib/osx/libmetawear.a
-
+	ADDON_LIBS += libs/lib/osx/libnativeble-static.a
 vs:
 
 linux64:
