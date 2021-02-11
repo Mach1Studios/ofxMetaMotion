@@ -23,7 +23,7 @@ metamotionController::~metamotionController() {
 //----------------------------------------------------- setup.
 void metamotionController::setup() {
     //getDeviceIDs();
-    nativeble.listDevices();
+    nativeble.setup();
     isConnected = false;
     resetOrientation();
 }
