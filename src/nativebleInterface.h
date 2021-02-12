@@ -76,27 +76,8 @@ public:
     
     bool connect(int deviceIndex) {
         ble.connect(devices[deviceIndex].address);
-        
-        // Setup notify for when data is received
-        /*
-        ble.notify(NORDIC_UART_SERVICE_UUID, NORDIC_UART_CHAR_TX, [&](const uint8_t* data, uint32_t length) {
-            std::cout << "\r<" << devices[deviceIndex].name << "> " << "(" << length << ") ";
-            for (int i = 0; i < length; i++) { std::cout << data[i]; }
-            std::cout << std::endl << " > ";
-        });
-        */
         connected = true;
         return true;
-    }
-    
-    void bleRead() {
-       /*
-        ble.read(NORDIC_UART_SERVICE_UUID, NORDIC_UART_CHAR_TX, [&](const uint8_t* data, uint32_t length) {
-            std::cout << "\r<" << "> " << "(" << length << ") ";
-            for (int i = 0; i < length; i++) { std::cout << data[i]; }
-            std::cout << std::endl << " > ";
-        });
-        */
     }
     
     bool disconnect() {

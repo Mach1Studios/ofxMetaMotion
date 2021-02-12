@@ -123,14 +123,12 @@ void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
     mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_CORRECTED_GYRO);
     mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_CORRECTED_MAG);
     mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
-
     mbl_mw_sensor_fusion_start(board);
 }
 
 void metamotionController::disable_fusion_sampling(MblMwMetaWearBoard* board) {
     auto fusion_signal = mbl_mw_sensor_fusion_get_data_signal(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
     mbl_mw_datasignal_unsubscribe(fusion_signal);
-
     mbl_mw_sensor_fusion_stop(board);
 }
 
@@ -179,11 +177,10 @@ void metamotionController::write_gatt_char(void *context, const void *caller, Mb
         << ", uuid_high: " << characteristic->uuid_high
         << ", uuid_low: " << characteristic->uuid_low
         << "}" << dec << endl;
-    ;
+    
     cout << "write >> ( length: " << int(length) << ") " << (char*)value << " ," << (std::string((char*)value, int(length)).length()) << endl;
 //  wrapper->nativeble.ble.read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low).c_str(), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low).c_str(), [&](const uint8_t* data, uint32_t length) {
     wrapper->nativeble.ble.write_command(METAMOTION_WRITE_SERVICE_UUID, METAMOTION_WRITE_UUID, std::string((char*)value, int(length)));
-
 }
 
 
@@ -207,6 +204,6 @@ void metamotionController::enable_char_notify(void *context, const void *caller,
 }
 
 void metamotionController::on_disconnect(void *context, const void *caller, MblMwFnVoidVoidPtrInt handler) {
-   auto *wrapper = static_cast<metamotionController *>(context);
+    auto *wrapper = static_cast<metamotionController *>(context);
     handler(caller, MBL_MW_STATUS_OK);
 }

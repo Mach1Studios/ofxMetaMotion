@@ -54,7 +54,7 @@ public:
     void connectDevice(int deviceID);
     void disconnectDevice();
     
-    // get functions for data
+    MblMwCartesianFloat* outputEuler;
     float* getEulerAngle();
     
     // ble
