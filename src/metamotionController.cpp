@@ -6,6 +6,7 @@
 //
 
 #include "metamotionController.h"
+#include "ofMain.h"
 
 using std::chrono::duration_cast;
 using std::chrono::milliseconds;
@@ -32,21 +33,43 @@ void metamotionController::update(){
         if (nativeble.devices.size() < 1) { // if there are no found devices search again
             nativeble.rescanDevices();
         } else if (nativeble.devices.size() > 0){ // if there are found devices
-            if (!nativeble.findMetaMotionDevice()){ // but they are not MetaMotion search again
+            metaMotionDeviceIndex = nativeble.findMetaMotionDevice(); // store autofound index
+            cout << metaMotionDeviceIndex <<endl;
+            if (metaMotionDeviceIndex == -1){ // but they are not MetaMotion search again
                 nativeble.listDevices();
                 nativeble.rescanDevices();
-            }
+            } else if (metaMotionDeviceIndex > -1) { // connect to found device in case the above didnt work
+                nativeble.connect(metaMotionDeviceIndex);
+                
+                // setup meta motion
+                MblMwBtleConnection btleConnection;
+                btleConnection.context = this;
+                btleConnection.write_gatt_char = write_gatt_char;
+                btleConnection.read_gatt_char = read_gatt_char;
+                btleConnection.enable_notifications = enable_char_notify;
+                btleConnection.on_disconnect = on_disconnect;
+                board = mbl_mw_metawearboard_create(&btleConnection);
+                mbl_mw_metawearboard_initialize(board, this, [](void* context, MblMwMetaWearBoard* board, int32_t status) -> void {
+                    auto dev_info = mbl_mw_metawearboard_get_device_information(board);
+                    cout << "firmware revision number = " << dev_info->firmware_revision << endl;
+                    cout << "model = " << mbl_mw_metawearboard_get_model(board) << endl;
+                    
+                    auto *wrapper = static_cast<metamotionController *>(context);
+                    
+                    wrapper->enable_fusion_sampling(wrapper->board);
+                    });
+              }
         }
     }
     
     if(nativeble.connected){ // when connected section
         // pass device from nativeble to metamotion here
-        
     }
 }
 
 void metamotionController::disconnectDevice() {
     nativeble.exit();
+    mbl_mw_metawearboard_free(board);
 }
 
 void metamotionController::data_printer(void* context, const MblMwData* data) {
@@ -87,16 +110,20 @@ void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
     // Write the config to the sensor
     configure_sensor_fusion(board);
     
-    auto data_handler = [](void* context, const MblMwData* data) -> void {
+    auto fusion_signal = mbl_mw_sensor_fusion_get_data_signal(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
+    
+    mbl_mw_datasignal_subscribe(fusion_signal, this, [](void* context, const MblMwData* data) -> void {
         // Cast value to MblMwCartesianFloat*
         auto euler = (MblMwCartesianFloat*) data->value;
-        printf("(%.3fg, %.3fg, %.3fg)\n", euler->x, euler->y, euler->z);
-    };
-
-    auto fusion_signal = mbl_mw_sensor_fusion_get_data_signal(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
-    mbl_mw_datasignal_subscribe(fusion_signal, nullptr, data_handler);
+        printf("(%.3f, %.3f, %.3f)\n", euler->x, euler->y, euler->z);
+    });
 
     // Start
+    mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_CORRECTED_ACC);
+    mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_CORRECTED_GYRO);
+    mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_CORRECTED_MAG);
+    mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
+
     mbl_mw_sensor_fusion_start(board);
 }
 
@@ -113,4 +140,73 @@ void metamotionController::resetOrientation() {
 
 void metamotionController::tare() {
     
+}
+
+string HighLow2Uuid(const uint64_t high, const uint64_t low){
+        std::stringstream sstream;
+        sstream << std::hex << high;
+        sstream << std::hex << low;
+        std::string s = sstream.str() + "0000";
+        return s;
+}
+
+void metamotionController::read_gatt_char(void *context, const void *caller, const MblMwGattChar *characteristic,
+                                          MblMwFnIntVoidPtrArray handler) {
+    auto *wrapper = static_cast<metamotionController *>(context);
+    cout << setw(8) << setfill('0') << hex
+        << "Reading characteristic: {service_uuid_high: " << characteristic->service_uuid_high
+        << ", service_uuid_low: " << characteristic->service_uuid_low
+        << ", uuid_high: " << characteristic->uuid_high
+        << ", uuid_low: " << characteristic->uuid_low
+        << "}" << dec << endl;
+    
+//  wrapper->nativeble.ble.read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low).c_str(), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low).c_str(), [&](const uint8_t* data, uint32_t length) {
+    wrapper->nativeble.ble.read(METAMOTION_READ_SERVICE_UUID, METAMOTION_READ_UUID, [&, handler, caller](const uint8_t* data, uint32_t length) {
+        std::cout << "read >> " << "( length: " << length << ") ";
+        for (int i = 0; i < length; i++) { std::cout << data[i]; }
+        std::cout << std::endl ;
+        handler(caller,data,length);
+   });
+}
+
+
+void metamotionController::write_gatt_char(void *context, const void *caller, MblMwGattCharWriteType writeType,
+                                          const MblMwGattChar *characteristic, const uint8_t *value, uint8_t length){
+    auto *wrapper = static_cast<metamotionController *>(context);
+    cout << setw(8) << setfill('0') << hex
+        << "Writing characteristic: {service_uuid_high: " << characteristic->service_uuid_high
+        << ", service_uuid_low: " << characteristic->service_uuid_low
+        << ", uuid_high: " << characteristic->uuid_high
+        << ", uuid_low: " << characteristic->uuid_low
+        << "}" << dec << endl;
+    ;
+    cout << "write >> ( length: " << int(length) << ") " << (char*)value << " ," << (std::string((char*)value, int(length)).length()) << endl;
+//  wrapper->nativeble.ble.read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low).c_str(), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low).c_str(), [&](const uint8_t* data, uint32_t length) {
+    wrapper->nativeble.ble.write_command(METAMOTION_WRITE_SERVICE_UUID, METAMOTION_WRITE_UUID, std::string((char*)value, int(length)));
+
+}
+
+
+void metamotionController::enable_char_notify(void *context, const void *caller, const MblMwGattChar *characteristic,
+                                             MblMwFnIntVoidPtrArray handler, MblMwFnVoidVoidPtrInt ready) {
+   auto *wrapper = static_cast<metamotionController *>(context);
+    cout << setw(8) << setfill('0') << hex
+        << "Notify characteristic: {service_uuid_high: " << characteristic->service_uuid_high
+        << ", service_uuid_low: " << characteristic->service_uuid_low
+        << ", uuid_high: " << characteristic->uuid_high
+        << ", uuid_low: " << characteristic->uuid_low
+        << "}" << dec << endl;
+ 
+    wrapper->nativeble.ble.notify(METAMOTION_NOTIFY_SERVICE_UUID, METAMOTION_NOTIFY_UUID, [&,handler,caller](const uint8_t* data, uint32_t length) {
+    // std::cout << "notify >> " << "( length: " << length << ") ";
+    for (int i = 0; i < length; i++) { std::cout << data[i]; }
+       // std::cout << std::endl << " > ";
+        handler(caller,data,length);
+    });
+    ready(caller, MBL_MW_STATUS_OK);
+}
+
+void metamotionController::on_disconnect(void *context, const void *caller, MblMwFnVoidVoidPtrInt handler) {
+   auto *wrapper = static_cast<metamotionController *>(context);
+    handler(caller, MBL_MW_STATUS_OK);
 }

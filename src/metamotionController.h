@@ -59,8 +59,10 @@ public:
     
     // ble
     nativebleInterface nativeble;
+    int metaMotionDeviceIndex;
     std::vector<NativeBLE::DeviceDescriptor> devices;
     
+    MblMwMetaWearBoard * board;
     void data_printer(void* context, const MblMwData* data);
     void configure_sensor_fusion(MblMwMetaWearBoard* board);
     void enable_fusion_sampling(MblMwMetaWearBoard* board);
@@ -69,4 +71,14 @@ public:
     void resetOrientation();
     void tare();
     
+    static void read_gatt_char(void *context, const void *caller, const MblMwGattChar *characteristic,
+                                  MblMwFnIntVoidPtrArray handler);
+
+    static void write_gatt_char(void *context, const void *caller, MblMwGattCharWriteType writeType,
+                                   const MblMwGattChar *characteristic, const uint8_t *value, uint8_t length);
+
+    static void enable_char_notify(void *context, const void *caller, const MblMwGattChar *characteristic,
+                                      MblMwFnIntVoidPtrArray handler, MblMwFnVoidVoidPtrInt ready);
+
+    static void on_disconnect(void *context, const void *caller, MblMwFnVoidVoidPtrInt handler);
 };
