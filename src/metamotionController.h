@@ -69,6 +69,4 @@ public:
     void resetOrientation();
     void tare();
     
-    // to check if a device connected currently
-    bool isConnected;
 };
