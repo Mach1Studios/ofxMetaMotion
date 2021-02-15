@@ -110,8 +110,10 @@ void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
     auto fusion_signal = mbl_mw_sensor_fusion_get_data_signal(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
     
     mbl_mw_datasignal_subscribe(fusion_signal, this, [](void* context, const MblMwData* data) -> void {
-        // Cast value to MblMwCartesianFloat*
-        auto euler = (MblMwCartesianFloat*) data->value;
+        auto *wrapper = static_cast<metamotionController *>(context);
+        
+        auto euler = (MblMwCartesianFloat*)data->value;
+        wrapper->outputEuler = (MblMwCartesianFloat*)data->value;
         printf("(%.3f, %.3f, %.3f)\n", euler->x, euler->y, euler->z);
         // x = yaw
         // y = roll
