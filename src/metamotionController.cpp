@@ -121,9 +121,6 @@ void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
     });
     
     // Start
-    mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_CORRECTED_ACC);
-    mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_CORRECTED_GYRO);
-    mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_CORRECTED_MAG);
     mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
     mbl_mw_sensor_fusion_start(board);
 }
@@ -142,18 +139,23 @@ void metamotionController::tare() {
 }
 
 string HighLow2Uuid(const uint64_t high, const uint64_t low){
-        std::stringstream sstream;
-        sstream << std::hex << high;
-        sstream << std::hex << low;
-        std::string s = sstream.str() + "0000";
-        return s;
+    uint8_t *u_h = (uint8_t *)&(high);
+    uint8_t *u_l = (uint8_t *)&(low);
+
+    char UUID[38];
+    sprintf(UUID, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+            u_h[7], u_h[6], u_h[5], u_h[4], u_h[3], u_h[2], u_h[1], u_h[0],
+            u_l[7], u_l[6], u_l[5], u_l[4], u_l[3], u_l[2], u_l[1], u_l[0]
+            );
+    
+    return string(UUID);
 }
 
 void metamotionController::read_gatt_char(void *context, const void *caller, const MblMwGattChar *characteristic,
                                           MblMwFnIntVoidPtrArray handler) {
     auto *wrapper = static_cast<metamotionController *>(context);
-    
-    wrapper->nativeble.ble.read(METAMOTION_READ_SERVICE_UUID, METAMOTION_READ_UUID, [&, handler, caller](const uint8_t* data, uint32_t length) {
+
+    wrapper->nativeble.ble.read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&, handler, caller](const uint8_t* data, uint32_t length) {
         handler(caller,data,length);
    });
 }
@@ -162,14 +164,14 @@ void metamotionController::read_gatt_char(void *context, const void *caller, con
 void metamotionController::write_gatt_char(void *context, const void *caller, MblMwGattCharWriteType writeType,
                                           const MblMwGattChar *characteristic, const uint8_t *value, uint8_t length){
     auto *wrapper = static_cast<metamotionController *>(context);
-    wrapper->nativeble.ble.write_command(METAMOTION_WRITE_SERVICE_UUID, METAMOTION_WRITE_UUID, std::string((char*)value, int(length)));
+    wrapper->nativeble.ble.write_command(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), std::string((char*)value, int(length)));
 }
 
 
 void metamotionController::enable_char_notify(void *context, const void *caller, const MblMwGattChar *characteristic,
                                              MblMwFnIntVoidPtrArray handler, MblMwFnVoidVoidPtrInt ready) {
    auto *wrapper = static_cast<metamotionController *>(context);
-    wrapper->nativeble.ble.notify(METAMOTION_NOTIFY_SERVICE_UUID, METAMOTION_NOTIFY_UUID, [&,handler,caller](const uint8_t* data, uint32_t length) {
+    wrapper->nativeble.ble.notify(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&,handler,caller](const uint8_t* data, uint32_t length) {
         handler(caller,data,length);
     });
     ready(caller, MBL_MW_STATUS_OK);
