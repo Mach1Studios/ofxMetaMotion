@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ThreadedMMC.h"
 #include "metamotionController.h"
+#include "ThreadedMMC.h"
 
 class ofApp : public ofBaseApp{
 
@@ -24,6 +24,5 @@ class ofApp : public ofBaseApp{
         void gotMessage(ofMessage msg);
     
         float frameRate;
-        metamotionController mmc;
         ThreadedMMC threadedmmc;
 };

@@ -54,8 +54,10 @@ public:
     void connectDevice(int deviceID);
     void disconnectDevice();
     
-    MblMwCartesianFloat* outputEuler;
-    float* getEulerAngle();
+    float outputEuler[3];
+    float* getAngle();
+    float angle[3];
+    float angle_shift[3];
     
     // ble
     nativebleInterface nativeble;

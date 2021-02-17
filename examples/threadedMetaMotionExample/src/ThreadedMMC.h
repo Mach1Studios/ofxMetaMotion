@@ -9,19 +9,21 @@
 #define ThreadedMMC_h
 
 #include "ofMain.h"
+#include <atomic>
 
 class ThreadedMMC: public ofThread
 {
 public:
-
+    metamotionController mmc;
+    
     ~ThreadedMMC(){
         stop();
         waitForThread(false);
     }
 
     void setup(){
+        mmc.setup();
         start();
-        
     }
 
     /// Start the thread.
@@ -35,6 +37,8 @@ public:
 
     void threadedFunction(){
         while(isThreadRunning()){
+            mmc.update();
+            threadFrameNum++;
         }
     }
 

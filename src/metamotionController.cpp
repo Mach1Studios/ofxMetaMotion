@@ -60,7 +60,10 @@ void metamotionController::update(){
     }
     
     if(nativeble.connected){ // when connected section
-        // pass device from nativeble to metamotion here
+        // mapping hardware x-y-z axis to openFrameworks x-y-z axis standarts
+        angle[0] = outputEuler[0];
+        angle[1] = outputEuler[1];
+        angle[2] = outputEuler[2];
     }
 }
 
@@ -112,12 +115,11 @@ void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
     mbl_mw_datasignal_subscribe(fusion_signal, this, [](void* context, const MblMwData* data) -> void {
         auto *wrapper = static_cast<metamotionController *>(context);
         
-        auto euler = (MblMwCartesianFloat*)data->value;
-        wrapper->outputEuler = (MblMwCartesianFloat*)data->value;
-        printf("(%.3f, %.3f, %.3f)\n", euler->x, euler->y, euler->z);
-        // x = yaw
-        // y = roll
-        // z = pitch
+        auto euler = (MblMwEulerAngles*)data->value;
+        wrapper->outputEuler[0] = euler->yaw;
+        wrapper->outputEuler[1] = euler->pitch;
+        wrapper->outputEuler[2] = euler->roll;
+        printf("(%.3f, %.3f, %.3f)\n", euler->yaw, euler->pitch, euler->roll);
     });
     
     // Start
@@ -132,10 +134,26 @@ void metamotionController::disable_fusion_sampling(MblMwMetaWearBoard* board) {
 }
 
 void metamotionController::resetOrientation() {
+    for(int i=0; i< 3; i++){
+        angle_shift[i] = 0;
+    }
 }
 
 void metamotionController::tare() {
+    float* swpAngle = getAngle();
+    angle_shift[0] = angle_shift[0] - swpAngle[0];
+    angle_shift[1] = angle_shift[1] - swpAngle[1];
+    angle_shift[2] = angle_shift[2] - swpAngle[2];
+}
+
+float* metamotionController::getAngle() {
+    float* calculated_angle = new float[3];
+        
+    calculated_angle[0] = angle[0] + angle_shift[0];
+    calculated_angle[1] = angle[1] + angle_shift[1];
+    calculated_angle[2] = angle[2] + angle_shift[2];
     
+    return calculated_angle;
 }
 
 string HighLow2Uuid(const uint64_t high, const uint64_t low){
