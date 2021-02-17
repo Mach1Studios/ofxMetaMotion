@@ -1,8 +1,6 @@
-# ofxWitmotion
+# ofxMetaMotion
 
-### WORK IN PROGRESS ###
-
-MetaMotion addon for OpenFrameworks
+MetaMotion addon for OpenFrameworks, automatically searches for MetaMotion device via BLE device name `MetaWear`, connects to the device and streams the Euler orientation angles from the MetaMotion device.
 
 ## Setup
 
@@ -22,9 +20,8 @@ MetaMotion addon for OpenFrameworks
 ```cpp
     // in ofApp::setup()
     mmc.setup();
-    mmc.connectDevice(int DEVICE_ID);
     
     // in ofApp::update()
-    mmc.update();
-    mmc.getEulerAngle();
+    mmc.update(); // update handles device searching and auto-connection
+    mmc.getAngle();
 ```
