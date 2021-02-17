@@ -159,7 +159,7 @@ void metamotionController::resetOrientation() {
     }
 }
 
-void metamotionController::tare() {
+void metamotionController::recenter() {
     float* swpAngle = getAngle();
     angle_shift[0] = angle_shift[0] - swpAngle[0];
     angle_shift[1] = angle_shift[1] - swpAngle[1];

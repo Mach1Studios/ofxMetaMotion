@@ -75,7 +75,7 @@ void ofApp::mouseDragged(int x, int y, int button)
 void ofApp::mousePressed(int x, int y, int button)
 {
     //reset orientation
-    threadedmmc.mmc.tare();
+    threadedmmc.mmc.recenter();
 }
 
 //--------------------------------------------------------------

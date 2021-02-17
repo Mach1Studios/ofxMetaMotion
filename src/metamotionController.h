@@ -74,7 +74,7 @@ public:
     void calibration_mode(MblMwMetaWearBoard* board);
 
     void resetOrientation();
-    void tare();
+    void recenter();
     
     static void read_gatt_char(void *context, const void *caller, const MblMwGattChar *characteristic,
                                   MblMwFnIntVoidPtrArray handler);
