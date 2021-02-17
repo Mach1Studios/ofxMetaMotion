@@ -18,7 +18,7 @@ metamotionController::metamotionController() {
 }
 
 metamotionController::~metamotionController() {
-    nativeble.exit();
+    disconnectDevice();
 }
 
 //----------------------------------------------------- setup.
@@ -30,6 +30,7 @@ void metamotionController::setup() {
 
 void metamotionController::update(){
     if (!nativeble.connected){
+        isConnected = false;
         if (nativeble.devices.size() < 1) { // if there are no found devices search again
             nativeble.rescanDevices();
         } else if (nativeble.devices.size() > 0){ // if there are found devices
@@ -54,7 +55,8 @@ void metamotionController::update(){
                     cout << "model = " << mbl_mw_metawearboard_get_model(board) << endl;
                     auto *wrapper = static_cast<metamotionController *>(context);
                     wrapper->enable_fusion_sampling(wrapper->board);
-                    });
+                });
+                isConnected = true;
             }
         }
     }
@@ -68,6 +70,7 @@ void metamotionController::update(){
 }
 
 void metamotionController::disconnectDevice() {
+    isConnected = false;
     nativeble.exit();
     mbl_mw_metawearboard_free(board);
 }
@@ -119,7 +122,7 @@ void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
         wrapper->outputEuler[0] = euler->yaw;
         wrapper->outputEuler[1] = euler->pitch;
         wrapper->outputEuler[2] = euler->roll;
-        printf("(%.3f, %.3f, %.3f)\n", euler->yaw, euler->pitch, euler->roll);
+        //printf("(%.3f, %.3f, %.3f)\n", euler->yaw, euler->pitch, euler->roll);
     });
     
     // Start

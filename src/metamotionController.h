@@ -53,6 +53,7 @@ public:
     // ble connection functions
     void connectDevice(int deviceID);
     void disconnectDevice();
+    bool isConnected = false;
     
     float outputEuler[3];
     float* getAngle();
