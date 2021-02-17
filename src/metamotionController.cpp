@@ -51,8 +51,8 @@ void metamotionController::update(){
                 board = mbl_mw_metawearboard_create(&btleConnection);
                 mbl_mw_metawearboard_initialize(board, this, [](void* context, MblMwMetaWearBoard* board, int32_t status) -> void {
                     auto dev_info = mbl_mw_metawearboard_get_device_information(board);
-                    cout << "firmware revision number = " << dev_info->firmware_revision << endl;
-                    cout << "model = " << mbl_mw_metawearboard_get_model(board) << endl;
+                    std::cout << "firmware revision number = " << dev_info->firmware_revision << std::endl;
+                    std::cout << "model = " << mbl_mw_metawearboard_get_model(board) << std::endl;
                     auto *wrapper = static_cast<metamotionController *>(context);
                     wrapper->enable_fusion_sampling(wrapper->board);
                 });
@@ -62,10 +62,15 @@ void metamotionController::update(){
     }
     
     if(nativeble.connected){ // when connected section
-        // mapping hardware x-y-z axis to openFrameworks x-y-z axis standarts
         angle[0] = outputEuler[0];
         angle[1] = outputEuler[1];
         angle[2] = outputEuler[2];
+        /* Debug
+        std::cout << "4: " << outputEuler[3];
+        std::cout << "1: " << outputEuler[0];
+        std::cout << "2: " << outputEuler[1];
+        std::cout << "3: " << outputEuler[2] << std::endl;
+         */
     }
 }
 
@@ -94,10 +99,10 @@ void metamotionController::data_printer(void* context, const MblMwData* data) {
     auto time_c = system_clock::to_time_t(then);
     auto rem_ms= data->epoch % 1000;
 
-    cout << "{timestamp: " << put_time(localtime(&time_c), "%Y%m%d-%T") << "." << rem_ms << ", "
+    std::cout << "{timestamp: " << put_time(localtime(&time_c), "%Y%m%d-%T") << "." << rem_ms << ", "
         << "type_id: " << data->type_id << ", "
         << "bytes: " << bytes_str.c_str() << "}"
-        << endl;
+        << std::endl;
 }
 
 void metamotionController::configure_sensor_fusion(MblMwMetaWearBoard* board) {
@@ -122,6 +127,7 @@ void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
         wrapper->outputEuler[0] = euler->yaw;
         wrapper->outputEuler[1] = euler->pitch;
         wrapper->outputEuler[2] = euler->roll;
+        wrapper->outputEuler[3] = euler->heading;
         //printf("(%.3f, %.3f, %.3f)\n", euler->yaw, euler->pitch, euler->roll);
     });
     
@@ -164,7 +170,7 @@ string HighLow2Uuid(const uint64_t high, const uint64_t low){
     uint8_t *u_l = (uint8_t *)&(low);
 
     char UUID[38];
-    sprintf(UUID, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
+    std::sprintf(UUID, "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
             u_h[7], u_h[6], u_h[5], u_h[4], u_h[3], u_h[2], u_h[1], u_h[0],
             u_l[7], u_l[6], u_l[5], u_l[4], u_l[3], u_l[2], u_l[1], u_l[0]
             );

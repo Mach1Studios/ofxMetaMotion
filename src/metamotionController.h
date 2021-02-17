@@ -55,7 +55,7 @@ public:
     void disconnectDevice();
     bool isConnected = false;
     
-    float outputEuler[3];
+    float outputEuler[4];
     float* getAngle();
     float angle[3];
     float angle_shift[3];

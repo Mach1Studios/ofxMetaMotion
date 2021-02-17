@@ -32,6 +32,7 @@ public:
     }
 
     void stop(){
+        mmc.disconnectDevice();
         stopThread();
     }
 
