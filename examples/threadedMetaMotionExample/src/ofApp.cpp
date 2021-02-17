@@ -25,9 +25,9 @@ void ofApp::draw()
     // rotate
     float* a = threadedmmc.mmc.getAngle();
     
-    float rX = a[0];
-    float rY = a[1];
-    float rZ = a[2];
+    float rX = a[2];
+    float rY = -a[0];
+    float rZ = a[1];
     
     ofRotateXDeg(rX);
     ofRotateYDeg(rY);
