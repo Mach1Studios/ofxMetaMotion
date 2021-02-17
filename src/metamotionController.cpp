@@ -108,8 +108,10 @@ void metamotionController::data_printer(void* context, const MblMwData* data) {
 void metamotionController::configure_sensor_fusion(MblMwMetaWearBoard* board) {
     // set fusion mode to ndof (n degress of freedom)
     mbl_mw_sensor_fusion_set_mode(board, MBL_MW_SENSOR_FUSION_MODE_NDOF);
-    // set acceleration rangen to +/-8G, note accelerometer is configured here
-    mbl_mw_sensor_fusion_set_acc_range(board, MBL_MW_SENSOR_FUSION_ACC_RANGE_8G);
+    // set acceleration range to +/-16G, note accelerometer is configured here
+    mbl_mw_sensor_fusion_set_acc_range(board, MBL_MW_SENSOR_FUSION_ACC_RANGE_16G);
+    // set gyro range to 2000 DPS
+    mbl_mw_sensor_fusion_set_gyro_range(board, MBL_MW_SENSOR_FUSION_GYRO_RANGE_2000DPS);
     // write changes to the board
     mbl_mw_sensor_fusion_write_config(board);
 }
@@ -124,10 +126,15 @@ void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
         auto *wrapper = static_cast<metamotionController *>(context);
         
         auto euler = (MblMwEulerAngles*)data->value;
-        wrapper->outputEuler[0] = euler->yaw;
+        if (wrapper->bUseMagnoHeading){ // externally set use of magnometer to correct IMU or not
+            wrapper->outputEuler[0] = euler->heading;
+            wrapper->outputEuler[3] = euler->yaw;
+        } else {
+            wrapper->outputEuler[0] = euler->yaw;
+            wrapper->outputEuler[3] = euler->heading;
+        }
         wrapper->outputEuler[1] = euler->pitch;
         wrapper->outputEuler[2] = euler->roll;
-        wrapper->outputEuler[3] = euler->heading;
         //printf("(%.3f, %.3f, %.3f)\n", euler->yaw, euler->pitch, euler->roll);
     });
     
@@ -140,6 +147,10 @@ void metamotionController::disable_fusion_sampling(MblMwMetaWearBoard* board) {
     auto fusion_signal = mbl_mw_sensor_fusion_get_data_signal(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
     mbl_mw_datasignal_unsubscribe(fusion_signal);
     mbl_mw_sensor_fusion_stop(board);
+}
+
+void metamotionController::calibration_mode(MblMwMetaWearBoard* board) {
+    
 }
 
 void metamotionController::resetOrientation() {

@@ -55,6 +55,7 @@ public:
     void disconnectDevice();
     bool isConnected = false;
     
+    bool bUseMagnoHeading = true;
     float outputEuler[4];
     float* getAngle();
     float angle[3];
@@ -70,6 +71,7 @@ public:
     void configure_sensor_fusion(MblMwMetaWearBoard* board);
     void enable_fusion_sampling(MblMwMetaWearBoard* board);
     void disable_fusion_sampling(MblMwMetaWearBoard* board);
+    void calibration_mode(MblMwMetaWearBoard* board);
 
     void resetOrientation();
     void tare();
