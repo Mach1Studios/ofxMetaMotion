@@ -26,6 +26,7 @@
 
 #include "metawear/core/metawearboard.h"
 #include "metawear/core/module.h"
+#include "metawear/core/settings.h"
 
 #include "metawear/core/status.h"
 #include "metawear/core/debug.h"
@@ -68,6 +69,7 @@ public:
     
     MblMwMetaWearBoard * board;
     void data_printer(void* context, const MblMwData* data);
+    void get_current_power_status(MblMwMetaWearBoard* board);
     void configure_sensor_fusion(MblMwMetaWearBoard* board);
     void enable_fusion_sampling(MblMwMetaWearBoard* board);
     void disable_fusion_sampling(MblMwMetaWearBoard* board);

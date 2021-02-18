@@ -55,6 +55,7 @@ void metamotionController::update(){
                     std::cout << "model = " << mbl_mw_metawearboard_get_model(board) << std::endl;
                     auto *wrapper = static_cast<metamotionController *>(context);
                     wrapper->enable_fusion_sampling(wrapper->board);
+                    wrapper->get_current_power_status(wrapper->board);
                 });
                 isConnected = true;
             }
@@ -114,6 +115,23 @@ void metamotionController::configure_sensor_fusion(MblMwMetaWearBoard* board) {
     mbl_mw_sensor_fusion_set_gyro_range(board, MBL_MW_SENSOR_FUSION_GYRO_RANGE_2000DPS);
     // write changes to the board
     mbl_mw_sensor_fusion_write_config(board);
+    
+    // set the tx power as high as allowed
+    mbl_mw_settings_set_tx_power(board, 4);
+}
+
+void metamotionController::get_current_power_status(MblMwMetaWearBoard* board) {
+    auto power_status = mbl_mw_settings_get_power_status_data_signal(board);
+    mbl_mw_datasignal_subscribe(power_status, this, [](void* context, const MblMwData* data) -> void {
+        auto *wrapper = static_cast<metamotionController *>(context);
+        std::cout << "Power Status: " << data << std::endl;
+    });
+    
+    auto charge_status = mbl_mw_settings_get_charge_status_data_signal(board);
+    mbl_mw_datasignal_subscribe(charge_status, this, [](void* context, const MblMwData* data) -> void {
+        auto *wrapper = static_cast<metamotionController *>(context);
+        std::cout << "Charge Status: " << data << std::endl;
+    });
 }
 
 void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
