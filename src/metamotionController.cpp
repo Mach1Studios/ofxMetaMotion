@@ -76,9 +76,11 @@ void metamotionController::update(){
 }
 
 void metamotionController::disconnectDevice() {
+    if (isConnected){
+        mbl_mw_metawearboard_free(board);
+    }
     isConnected = false;
     nativeble.exit();
-    mbl_mw_metawearboard_free(board);
 }
 
 void metamotionController::data_printer(void* context, const MblMwData* data) {
