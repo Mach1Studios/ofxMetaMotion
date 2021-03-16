@@ -6,6 +6,9 @@ meta:
 	ADDON_URL = "https://github.com/Mach1Studios/ofxMetaMotion"
 
 common:
+	ADDON_INCLUDES += libs/libmetawear/include
+	ADDON_INCLUDES += libs/libnativeble/include
+	ADDON_INCLUDES += src
 linux:
 linux64:
 linuxarmv6l:
@@ -13,7 +16,6 @@ linuxarmv7l:
 android/armeabi-v7a:
 android/x86:
 osx:
-	ADDON_LIBS += libs/libmetawear/lib/osx/libmetawear.a
 	ADDON_LIBS += libs/libnativeble/lib/osx/libnativeble-static.a
 ios:
 tvos:
