@@ -52,6 +52,7 @@ public:
     std::vector<string> getDeviceIDs();
     
     // ble connection functions
+    void search();
     void connectDevice(int deviceID);
     void disconnectDevice();
     bool isConnected = false;

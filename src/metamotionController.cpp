@@ -26,9 +26,10 @@ void metamotionController::setup() {
     //getDeviceIDs();
     nativeble.setup();
     resetOrientation();
+    search();
 }
 
-void metamotionController::update(){
+void metamotionController::search() {
     if (!nativeble.connected){
         isConnected = false;
         if (nativeble.devices.size() < 1) { // if there are no found devices search again
@@ -61,7 +62,9 @@ void metamotionController::update(){
             }
         }
     }
-    
+}
+
+void metamotionController::update(){
     if(nativeble.connected){ // when connected section
         angle[0] = outputEuler[0];
         angle[1] = outputEuler[1];
