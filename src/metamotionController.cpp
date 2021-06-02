@@ -168,9 +168,8 @@ void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
 }
 
 void metamotionController::enable_led(MblMwMetaWearBoard* board) {
-    //MblMwLedPattern pattern = { 16, 0, 150, 250, 150, 1000, 0, 500 };
     MblMwLedPattern pattern;
-    mbl_mw_led_load_preset_pattern(&pattern, MBL_MW_LED_PRESET_PULSE);
+    pattern = { 8, 0, 250, 250, 250, 5000, 0, 0 };
     mbl_mw_led_write_pattern(board, &pattern, MBL_MW_LED_COLOR_RED);
     mbl_mw_led_play(board);
 }
