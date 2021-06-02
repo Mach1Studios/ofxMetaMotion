@@ -164,6 +164,15 @@ void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
     // Start
     mbl_mw_sensor_fusion_enable_data(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
     mbl_mw_sensor_fusion_start(board);
+    enable_led(board);
+}
+
+void metamotionController::enable_led(MblMwMetaWearBoard* board) {
+    //MblMwLedPattern pattern = { 16, 0, 150, 250, 150, 1000, 0, 500 };
+    MblMwLedPattern pattern;
+    mbl_mw_led_load_preset_pattern(&pattern, MBL_MW_LED_PRESET_PULSE);
+    mbl_mw_led_write_pattern(board, &pattern, MBL_MW_LED_COLOR_RED);
+    mbl_mw_led_play(board);
 }
 
 void metamotionController::disable_fusion_sampling(MblMwMetaWearBoard* board) {

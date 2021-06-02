@@ -75,6 +75,7 @@ public:
     void enable_fusion_sampling(MblMwMetaWearBoard* board);
     void disable_fusion_sampling(MblMwMetaWearBoard* board);
     void calibration_mode(MblMwMetaWearBoard* board);
+    void enable_led(MblMwMetaWearBoard* board);
 
     void resetOrientation();
     void recenter();
