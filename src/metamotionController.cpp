@@ -2,7 +2,7 @@
 //  metamotionController.cpp
 //  Created by Mach1 on 01/28/21.
 //
-//  References can be found at 
+//  References can be found at https://mbientlab.com/cppdocs/latest/index.html
 //
 
 #include "metamotionController.h"
@@ -179,6 +179,8 @@ void metamotionController::disable_fusion_sampling(MblMwMetaWearBoard* board) {
     auto fusion_signal = mbl_mw_sensor_fusion_get_data_signal(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
     mbl_mw_datasignal_unsubscribe(fusion_signal);
     mbl_mw_sensor_fusion_stop(board);
+    // stop the LED pattern from playing
+    mbl_mw_led_stop(board);
 }
 
 void metamotionController::calibration_mode(MblMwMetaWearBoard* board) {
