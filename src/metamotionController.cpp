@@ -80,6 +80,7 @@ void metamotionController::update(){
 
 void metamotionController::disconnectDevice() {
     if (isConnected){
+        disable_led(board);
         mbl_mw_metawearboard_free(board);
     }
     isConnected = false;
@@ -174,12 +175,15 @@ void metamotionController::enable_led(MblMwMetaWearBoard* board) {
     mbl_mw_led_play(board);
 }
 
+void metamotionController::disable_led(MblMwMetaWearBoard* board) {
+    // stop the LED pattern from playing
+    mbl_mw_led_stop_and_clear(board);
+}
+
 void metamotionController::disable_fusion_sampling(MblMwMetaWearBoard* board) {
     auto fusion_signal = mbl_mw_sensor_fusion_get_data_signal(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
     mbl_mw_datasignal_unsubscribe(fusion_signal);
     mbl_mw_sensor_fusion_stop(board);
-    // stop the LED pattern from playing
-    mbl_mw_led_stop(board);
 }
 
 void metamotionController::calibration_mode(MblMwMetaWearBoard* board) {
