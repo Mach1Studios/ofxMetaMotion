@@ -66,14 +66,17 @@ void metamotionController::search() {
 
 void metamotionController::update(){
     if(nativeble.connected){ // when connected section
-        angle[0] = outputEuler[0];
+        if (bUseMagnoHeading){
+            angle[0] = outputEuler[0];
+        } else {
+            angle[0] = outputEuler[3];
+        }
         angle[1] = outputEuler[1];
         angle[2] = outputEuler[2];
         /* Debug
-        std::cout << "4: " << outputEuler[3];
-        std::cout << "1: " << outputEuler[0];
-        std::cout << "2: " << outputEuler[1];
-        std::cout << "3: " << outputEuler[2] << std::endl;
+        std::cout << "Y: " << angle[0];
+        std::cout << "P: " << angle[1];
+        std::cout << "R: " << angle[2] << std::endl;
          */
     }
 }
