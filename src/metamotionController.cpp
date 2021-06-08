@@ -57,6 +57,7 @@ void metamotionController::search() {
                     auto *wrapper = static_cast<metamotionController *>(context);
                     wrapper->enable_fusion_sampling(wrapper->board);
                     wrapper->get_current_power_status(wrapper->board);
+                    wrapper->get_battery_percentage(wrapper->board);
                 });
                 isConnected = true;
                 isSearching = false;
@@ -150,12 +151,22 @@ void metamotionController::get_current_power_status(MblMwMetaWearBoard* board) {
     });
 }
 
+int metamotionController::get_battery_percentage(MblMwMetaWearBoard* board) {
+    auto battery_signal = mbl_mw_settings_get_battery_state_data_signal(board);
+    mbl_mw_datasignal_subscribe(battery_signal, this, [](void* context, const MblMwData* data) -> void {
+        auto *wrapper = static_cast<metamotionController *>(context);
+        auto state = (MblMwBatteryState*) data->value;
+        wrapper->battery_level = state->charge;
+        //printf("{voltage: %dmV, charge: %d}\n", state->voltage, state->charge);
+    });
+    mbl_mw_datasignal_read(battery_signal);
+}
+
 void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
     // Write the config to the sensor
     configure_sensor_fusion(board);
     
     auto fusion_signal = mbl_mw_sensor_fusion_get_data_signal(board, MBL_MW_SENSOR_FUSION_DATA_EULER_ANGLE);
-    
     mbl_mw_datasignal_subscribe(fusion_signal, this, [](void* context, const MblMwData* data) -> void {
         auto *wrapper = static_cast<metamotionController *>(context);
         
