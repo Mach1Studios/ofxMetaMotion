@@ -66,7 +66,7 @@ public:
     
     int findMetaMotionDevice(){
         for (int i = 0; i < devices.size(); i++) {
-            if (devices[i].name.find("MetaWear") != std::string::npos) {
+            if (devices[i].name.find("MetaWear") != std::string::npos || devices[i].name.find("Mach1-") != std::string::npos) {
                 std::cout << "Auto found MetaMotion: " << devices[i].address << '\n';
                 return i;
             }

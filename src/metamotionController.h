@@ -64,6 +64,7 @@ public:
     float angle[3];
     float angle_shift[3];
     int battery_level;
+    const char* module_name;
     
     // ble
     nativebleInterface nativeble;
@@ -80,6 +81,8 @@ public:
     void calibration_mode(MblMwMetaWearBoard* board);
     void enable_led(MblMwMetaWearBoard* board);
     void disable_led(MblMwMetaWearBoard* board);
+    void set_ad_name(MblMwMetaWearBoard* board);
+    void get_ad_name(MblMwMetaWearBoard* board);
 
     void resetOrientation();
     void recenter();

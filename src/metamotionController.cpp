@@ -58,6 +58,7 @@ void metamotionController::search() {
                     wrapper->enable_fusion_sampling(wrapper->board);
                     wrapper->get_current_power_status(wrapper->board);
                     wrapper->get_battery_percentage(wrapper->board);
+                    wrapper->set_ad_name(wrapper->board);
                 });
                 isConnected = true;
                 isSearching = false;
@@ -160,6 +161,34 @@ int metamotionController::get_battery_percentage(MblMwMetaWearBoard* board) {
         //printf("{voltage: %dmV, charge: %d}\n", state->voltage, state->charge);
     });
     mbl_mw_datasignal_read(battery_signal);
+}
+
+void metamotionController::set_ad_name(MblMwMetaWearBoard* board) {
+    const char* charName;
+    if (mbl_mw_metawearboard_get_model(board) == MBL_MW_MODEL_METAMOTION_S){
+        charName = "Mach1-MMS";
+    } else if (mbl_mw_metawearboard_get_model(board) == MBL_MW_MODEL_METAMOTION_RL){
+        charName = "Mach1-MMRL";
+    } else if (mbl_mw_metawearboard_get_model(board) == MBL_MW_MODEL_METAWEAR_R){
+        charName = "Mach1-MMR";
+    } else {
+        charName = "MetaWear";
+    }
+    size_t length = strlen(charName) + 1;
+    const char* beg = charName;
+    const char* end = charName + length;
+    uint8_t* name = new uint8_t[length];
+    size_t i = 0;
+    for (; beg != end; ++beg, ++i){
+        name[i] = (uint8_t)(*beg);
+    }
+    mbl_mw_settings_set_device_name(board, name, length);
+}
+
+void metamotionController::get_ad_name(MblMwMetaWearBoard* board){
+    uint32_t size;
+    auto module_info = mbl_mw_metawearboard_get_module_info(board, &size);
+    module_name = module_info->name;
 }
 
 void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {
