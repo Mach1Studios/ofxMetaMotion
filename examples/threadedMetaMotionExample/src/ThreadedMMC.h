@@ -32,12 +32,17 @@ public:
     }
 
     void stop(){
-        mmc.disconnectDevice();
+        if (mmc.isConnected){
+            mmc.disconnectDevice(mmc.board);
+        }
         stopThread();
     }
 
     void threadedFunction(){
         while(isThreadRunning()){
+            if (!mmc.isConnected && !mmc.isSearching){
+                mmc.search();
+            }
             mmc.update();
             threadFrameNum++;
         }

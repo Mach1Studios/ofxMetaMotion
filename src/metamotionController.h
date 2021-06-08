@@ -55,7 +55,7 @@ public:
     void search();
     bool isSearching = false;
     void connectDevice(int deviceID);
-    void disconnectDevice();
+    void disconnectDevice(MblMwMetaWearBoard* board);
     bool isConnected = false;
     
     bool bUseMagnoHeading = true;

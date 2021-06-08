@@ -18,7 +18,9 @@ metamotionController::metamotionController() {
 }
 
 metamotionController::~metamotionController() {
-    disconnectDevice();
+    if (isConnected){
+        disconnectDevice(board);
+    }
 }
 
 //----------------------------------------------------- setup.
@@ -85,10 +87,11 @@ void metamotionController::update(){
     }
 }
 
-void metamotionController::disconnectDevice() {
+void metamotionController::disconnectDevice(MblMwMetaWearBoard* board) {
     if (isConnected){
         disable_led(board);
         mbl_mw_metawearboard_free(board);
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
     isConnected = false;
     isSearching = false;
@@ -182,10 +185,12 @@ void metamotionController::set_ad_name(MblMwMetaWearBoard* board) {
     for (; beg != end; ++beg, ++i){
         name[i] = (uint8_t)(*beg);
     }
-    mbl_mw_settings_set_device_name(board, name, length);
+    mbl_mw_settings_set_device_name(board, name, strlen(charName));
 }
 
 void metamotionController::get_ad_name(MblMwMetaWearBoard* board){
+    // This function is for calling the name via metamotion
+    // A better way is to get the name via nativeble.devices[0].name
     uint32_t size;
     auto module_info = mbl_mw_metawearboard_get_module_info(board, &size);
     module_name = module_info->name;
