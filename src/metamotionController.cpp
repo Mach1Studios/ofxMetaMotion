@@ -30,6 +30,7 @@ void metamotionController::setup() {
 }
 
 void metamotionController::search() {
+    isSearching = true;
     if (!nativeble.connected){
         isConnected = false;
         if (nativeble.devices.size() < 1) { // if there are no found devices search again
@@ -41,7 +42,6 @@ void metamotionController::search() {
                 nativeble.rescanDevices();
             } else if (metaMotionDeviceIndex > -1) { // connect to found device in case the above didnt work
                 nativeble.connect(metaMotionDeviceIndex);
-                
                 // setup meta motion
                 MblMwBtleConnection btleConnection;
                 btleConnection.context = this;
@@ -59,9 +59,11 @@ void metamotionController::search() {
                     wrapper->get_current_power_status(wrapper->board);
                 });
                 isConnected = true;
+                isSearching = false;
             }
         }
     }
+    isSearching = false;
 }
 
 void metamotionController::update(){
@@ -87,6 +89,7 @@ void metamotionController::disconnectDevice() {
         mbl_mw_metawearboard_free(board);
     }
     isConnected = false;
+    isSearching = false;
     nativeble.exit();
 }
 
@@ -126,7 +129,11 @@ void metamotionController::configure_sensor_fusion(MblMwMetaWearBoard* board) {
     mbl_mw_sensor_fusion_write_config(board);
     
     // set the tx power as high as allowed
-    mbl_mw_settings_set_tx_power(board, 4);
+    if (mbl_mw_metawearboard_get_model(board) == MBL_MW_MODEL_METAMOTION_S){
+        mbl_mw_settings_set_tx_power(board, 8);
+    } else {
+        mbl_mw_settings_set_tx_power(board, 4);
+    }
 }
 
 void metamotionController::get_current_power_status(MblMwMetaWearBoard* board) {

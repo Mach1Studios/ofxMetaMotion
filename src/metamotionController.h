@@ -53,6 +53,7 @@ public:
     
     // ble connection functions
     void search();
+    bool isSearching = false;
     void connectDevice(int deviceID);
     void disconnectDevice();
     bool isConnected = false;
