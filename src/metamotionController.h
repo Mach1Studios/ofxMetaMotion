@@ -23,6 +23,7 @@
 #endif
 
 #include "nativebleInterface.h"
+#include "serialInterface.h"
 
 #include "metawear/core/metawearboard.h"
 #include "metawear/core/module.h"
@@ -67,7 +68,8 @@ public:
     const char* module_name;
     
     // ble
-    nativebleInterface nativeble;
+    NativebleInterface nativebleInterface;
+    SerialInterface serialInterface;
     int metaMotionDeviceIndex;
     std::vector<NativeBLE::DeviceDescriptor> devices;
     

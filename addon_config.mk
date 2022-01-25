@@ -8,6 +8,7 @@ meta:
 common:
 	ADDON_INCLUDES += libs/libmetawear/include
 	ADDON_INCLUDES += libs/libnativeble/include
+	ADDON_INCLUDES += libs/libusb/include
 	ADDON_INCLUDES += src
 linux:
 linux64:
@@ -17,6 +18,8 @@ android/armeabi-v7a:
 android/x86:
 osx:
 	ADDON_LIBS += libs/libnativeble/lib/osx/libnativeble-static.a
+	ADDON_LIBS += libs/libmetawear/lib/osx/libmetawear.dylib
+	ADDON_LIBS += libs/libusb/lib/libusb-1.0.a
 ios:
 tvos:
 msys2:

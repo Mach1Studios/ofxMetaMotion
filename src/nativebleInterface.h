@@ -18,7 +18,7 @@
 #define METAMOTION_WRITE_SERVICE_UUID   "326a9000-85cb-9195-d9dd-464cfbbae75a"
 #define METAMOTION_WRITE_UUID           "326a9001-85cb-9195-d9dd-464cfbbae75a"
 
-class nativebleInterface {
+class NativebleInterface {
 public:
     NativeBLE::CallbackHolder ble_events;
     NativeBLE::NativeBleController ble;
@@ -58,7 +58,7 @@ public:
     }
     
     void listDevices(){
-        std::cout << devices.size() << " devices found:" << std::endl;
+        std::cout << devices.size() << " ble devices found:" << std::endl;
         for (int i = 0; i < devices.size(); i++) {
             std::cout << "  " << i << ": " << devices[i].name << " (" << devices[i].address << ")" << std::endl;
         }
@@ -67,7 +67,7 @@ public:
     int findMetaMotionDevice(){
         for (int i = 0; i < devices.size(); i++) {
             if (devices[i].name.find("MetaWear") != std::string::npos || devices[i].name.find("Mach1-") != std::string::npos) {
-                std::cout << "Auto found MetaMotion: " << devices[i].address << '\n';
+                std::cout << "Auto found MetaMotion(BLE): " << devices[i].address << '\n';
                 return i;
             }
         }
@@ -82,5 +82,6 @@ public:
     
     bool disconnect() {
         ble.disconnect();
+        connected = false;
     }
 };

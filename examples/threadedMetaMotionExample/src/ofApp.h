@@ -25,4 +25,5 @@ class ofApp : public ofBaseApp{
     
         float frameRate;
         ThreadedMMC threadedmmc;
+        ofSerial    serial;
 };

@@ -1,11 +1,21 @@
 #include "ofApp.h"
 
+
 //--------------------------------------------------------------
 void ofApp::setup()
 {
     ofSetFrameRate(200);
     threadedmmc.setup();
     threadedmmc.start();
+    
+    serial.listDevices();
+    vector <ofSerialDeviceInfo> deviceList = serial.getDeviceList();
+    vector<string> deviceNames;
+    
+    ofLog() << "Device List: \n";
+    for (int i=0; i < deviceList.size(); i++) {
+        ofLog() << "Device: " << deviceList[i].getDeviceName();
+    }
 }
 
 //--------------------------------------------------------------
