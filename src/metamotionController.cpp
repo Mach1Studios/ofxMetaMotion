@@ -42,7 +42,7 @@ void metamotionController::search() {
             if (metaMotionDeviceIndex == -1){ // but they are not MetaMotion search again
                 nativeble.listDevices();
                 nativeble.rescanDevices();
-            } else if (metaMotionDeviceIndex > -1) { // connect to found device in case the above didnt work
+            } else if (metaMotionDeviceIndex > -1) { // connect to the first found device in case the above didnt work
                 nativeble.connect(metaMotionDeviceIndex);
                 // setup meta motion
                 MblMwBtleConnection btleConnection;
@@ -61,8 +61,8 @@ void metamotionController::search() {
                     wrapper->get_current_power_status(wrapper->board);
                     wrapper->get_battery_percentage(wrapper->board);
                     wrapper->set_ad_name(wrapper->board);
+                    wrapper->get_ad_name(wrapper->board);
                 });
-                isConnected = true;
                 isSearching = false;
             }
         }
@@ -139,6 +139,7 @@ void metamotionController::configure_sensor_fusion(MblMwMetaWearBoard* board) {
     } else {
         mbl_mw_settings_set_tx_power(board, 4);
     }
+    isConnected = true;
 }
 
 void metamotionController::get_current_power_status(MblMwMetaWearBoard* board) {
@@ -190,10 +191,7 @@ void metamotionController::set_ad_name(MblMwMetaWearBoard* board) {
 
 void metamotionController::get_ad_name(MblMwMetaWearBoard* board){
     // This function is for calling the name via metamotion
-    // A better way is to get the name via nativeble.devices[0].name
-    uint32_t size;
-    auto module_info = mbl_mw_metawearboard_get_module_info(board, &size);
-    module_name = module_info->name;
+    module_name = mbl_mw_metawearboard_get_model_name(board);    
 }
 
 void metamotionController::enable_fusion_sampling(MblMwMetaWearBoard* board) {

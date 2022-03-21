@@ -16,7 +16,9 @@ linuxarmv7l:
 android/armeabi-v7a:
 android/x86:
 osx:
+	ADDON_FRAMEWORKS = CoreBluetooth
 	ADDON_LIBS += libs/libnativeble/lib/osx/libnativeble-static.a
+	ADDON_LIBS += libs/libmetawear/lib/osx/libmetawear.dylib
 ios:
 tvos:
 msys2:
