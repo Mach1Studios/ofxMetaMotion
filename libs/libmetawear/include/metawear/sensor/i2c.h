@@ -21,14 +21,15 @@ typedef struct {
 } MblMwI2cReadParameters;
 
 /**
- * Retrieves the data signal representing i2c data.  The data signal is identified by the id value and if the id is not present, 
- * a new data signal will be created using the length parameter. 
+ * Retrieves the data signal representing i2c data
+ * The data signal is identified by the id value and if the id is not present, a new data signal will be created using the length parameter. 
  * @param board         Board the i2c bus resides on
  * @param length        Number of bytes to read
  * @param id            Numerical value identifying the data
  * @return Pointer to the i2c data signal
  */
 METAWEAR_API MblMwDataSignal* mbl_mw_i2c_get_data_signal(MblMwMetaWearBoard *board, uint8_t length, uint8_t id);
+
 /**
  * Writes data via the i2c bus
  * @param board             Board the i2c bus resides on

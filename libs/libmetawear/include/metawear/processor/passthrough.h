@@ -21,8 +21,11 @@ typedef enum {
 } MblMwPassthroughMode;
 
 /**
- * Create a passthrough processor.  A pointer representing the processor will be passed back 
- * to the user via a callback function.
+ * Create a passthrough processor.  
+ * On a pass-count, only the count # of samples will go through and then the processor will shut off.
+ * On a pass-conditional, if the count=0, all data is blocked. if the count>0, all data is passed.
+ * Gate that only allows data though based on a user configured internal state.
+ * A pointer representing the processor will be passed back to the user via a callback function.
  * @param source                Data signal providing the input for the processor
  * @param mode                  Processor's operation mode
  * @param count                 Internal count to initial the processor with
@@ -31,16 +34,18 @@ typedef enum {
  */
 METAWEAR_API int32_t mbl_mw_dataprocessor_passthrough_create(MblMwDataSignal *source, MblMwPassthroughMode mode, uint16_t count,
         void *context, MblMwFnDataProcessor processor_created);
+
 /**
- * Modify the internal count of the passthrough processor
+ * Modify the internal count of the passthrough processor.
  * @param passthrough           Passthrough processor to modify
  * @param new_count             New internal count
  * @return MBL_MW_STATUS_OK if processor state was updated, MBL_MW_STATUS_WARNING_INVALID_PROCESSOR_TYPE if 
  * a non-passthrough processor was passed in
  */
 METAWEAR_API int32_t mbl_mw_dataprocessor_passthrough_set_count(MblMwDataProcessor *passthrough, uint16_t new_count);
+
 /**
- * Modify the passthrough configuration
+ * Modify the passthrough configuration.
  * @param passthrough           Passthrough processor to update
  * @param mode                  New operation mode to use
  * @param count                 New initial count

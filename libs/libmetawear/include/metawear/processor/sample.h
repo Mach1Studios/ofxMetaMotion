@@ -12,8 +12,10 @@ extern "C" {
 #endif
 
 /**
- * Create a sample delay processor.  A pointer representing the processor will be passed back 
- * to the user via a callback function.
+ * Create a sample delay processor.  
+ * Holds data until a certain amount (bin_size) has been collected.
+ * Can be used to delay the input into another processor.
+ * A pointer representing the processor will be passed back to the user via a callback function.
  * @param source                Data signal providing the input for the processor
  * @param bin_size              Number of samples to hold before letting data through
  * @param context               Pointer to additional data for the callback function
@@ -21,8 +23,9 @@ extern "C" {
  */
 METAWEAR_API int32_t mbl_mw_dataprocessor_sample_create(MblMwDataSignal *source, uint8_t bin_size,
         void *context, MblMwFnDataProcessor processor_created);
+
 /**
- * Modify the bin size of a sample delay processor
+ * Modify the bin size of a sample delay processor.
  * @param sample_delay          Sample processor to modify
  * @param bin_size              Number of samples to hold before letting data through
  * @return MBL_MW_STATUS_OK if processor configuration was updated, MBL_MW_STATUS_WARNING_INVALID_PROCESSOR_TYPE if 

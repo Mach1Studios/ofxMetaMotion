@@ -34,32 +34,37 @@ typedef enum {
 } MblMwComparatorMode;
 
 /**
- * Create a comparator processor where signed/unsigned is inferred.  A pointer representing the processor will be passed back 
- * to the user via a callback function.
+ * Create a comparator processor where signed/unsigned is inferred.  
+ * Only allows data through that satisfies a comparison operation.
+ * A pointer representing the processor will be passed back to the user via a callback function.
  * @param source                Data signal providing the input for the processor
- * @param op                    Comparison operation to execute
+ * @param op                    Comparison operation to execute (=, !=, <, >)
  * @param reference             Reference value to compare the input to
  * @param context               Pointer to additional data for the callback function
  * @param processor_created     Callback function to be executed when the processor is created
  */
 METAWEAR_API int32_t mbl_mw_dataprocessor_comparator_create(MblMwDataSignal *source, MblMwComparatorOperation op, float reference, 
         void *context, MblMwFnDataProcessor processor_created);
+
 /**
- * Create a comparator processor specifically for a signed comparison.  A pointer representing the processor will be passed back 
- * to the user via a callback function.
+ * Create a comparator processor specifically for a signed comparison.  
+ * Only allows data through that satisfies a comparison operation.
+ * A pointer representing the processor will be passed back to the user via a callback function.
  * @param source                Data signal providing the input for the processor
- * @param op                    Comparison operation to execute
+ * @param op                    Comparison operation to execute (=, !=, <, >)
  * @param reference             Reference value to compare the input to
  * @param context               Pointer to additional data for the callback function
  * @param processor_created     Callback function to be executed when the processor is created
  */
 METAWEAR_API int32_t mbl_mw_dataprocessor_comparator_create_signed(MblMwDataSignal *source, MblMwComparatorOperation op, float reference, 
         void *context, MblMwFnDataProcessor processor_created);
+
 /**
- * Create a comparator processor specifically for an unsigned comparison.  A pointer representing the processor will be passed back 
- * to the user via a callback function.
+ * Create a comparator processor specifically for an unsigned comparison. 
+ * Only allows data through that satisfies a comparison operation. 
+ * A pointer representing the processor will be passed back to the user via a callback function.
  * @param source                Data signal providing the input for the processor
- * @param op                    Comparison operation to execute
+ * @param op                    Comparison operation to execute (=, !=, <, >)
  * @param reference             Reference value to compare the input to
  * @param context               Pointer to additional data for the callback function
  * @param processor_created     Callback function to be executed when the processor is created
@@ -68,18 +73,19 @@ METAWEAR_API int32_t mbl_mw_dataprocessor_comparator_create_unsigned(MblMwDataSi
         void *context, MblMwFnDataProcessor processor_created);
 
 /**
- * Modifies the comparator processor, changing the operation and reference value
+ * Modifies the comparator processor, changing the operation and reference value.
  * @param comparator            Comparator processor to modify
- * @param op                    New comparison operation
+ * @param op                    New comparison operation (=, !=, <, >)
  * @param reference             New reference value
  * @return MBL_MW_STATUS_OK if processor configuration was updated, MBL_MW_STATUS_WARNING_INVALID_PROCESSOR_TYPE if 
  * a non-comparator processor was passed in
  */
 METAWEAR_API int32_t mbl_mw_dataprocessor_comparator_modify(MblMwDataProcessor *comparator, MblMwComparatorOperation op, float reference);
+
 /**
- * Modifies the comparator processor for a feedback or feedforward loop 
+ * Modifies the comparator processor for a feedback or feedforward loop.
  * @param comparator            Comparator processor to modify
- * @param op                    New comparison operation
+ * @param op                    New comparison operation (=, !=, <, >)
  * @param reference_signal      Data signal output to be used for the reference value
  * @return MBL_MW_STATUS_OK if processor configuration was updated, MBL_MW_STATUS_WARNING_INVALID_PROCESSOR_TYPE if 
  * a non-comparator processor was passed in
@@ -88,10 +94,11 @@ METAWEAR_API int32_t mbl_mw_dataprocessor_comparator_modify_signal(MblMwDataProc
         MblMwDataSignal *reference_signal);
 
 /**
- * Create a multi-value comparator where a signed/unsigned comparison is inferred.  This feature is only available on firmware v1.2.3 and later.  
+ * Create a multi-value comparator where a signed/unsigned comparison is inferred.  
+ * This feature is only available on firmware v1.2.3 and later.  
  * A pointer representing the processor will be passed back to the user via a callback function.
  * @param source                Data signal providing the input
- * @param op                    Comparison operation to execute
+ * @param op                    Comparison operation to execute (=, !=, <, >)
  * @param mode                  Processor output mode
  * @param references            Array of reference values to compare against
  * @param references_length     Number of elements in the references array
@@ -100,11 +107,13 @@ METAWEAR_API int32_t mbl_mw_dataprocessor_comparator_modify_signal(MblMwDataProc
  */
 METAWEAR_API int32_t mbl_mw_dataprocessor_multi_comparator_create(MblMwDataSignal* source, MblMwComparatorOperation op, MblMwComparatorMode mode, 
         float references[], uint8_t references_length, void *context, MblMwFnDataProcessor processor_created);
+
 /**
- * Create a multi-value comparator for signed comparisons.  This feature is only available on firmware v1.2.3 and later.  A pointer representing the 
+ * Create a multi-value comparator for signed comparisons. 
+ * This feature is only available on firmware v1.2.3 and later.  A pointer representing the 
  * processor will be passed back to the user via a callback function.
  * @param source                Data signal providing the input
- * @param op                    Comparison operation to execute
+ * @param op                    Comparison operation to execute (=, !=, <, >)
  * @param mode                  Processor output mode
  * @param references            Array of reference values to compare against
  * @param references_length     Number of elements in the references array
@@ -113,9 +122,11 @@ METAWEAR_API int32_t mbl_mw_dataprocessor_multi_comparator_create(MblMwDataSigna
  */
 METAWEAR_API int32_t mbl_mw_dataprocessor_multi_comparator_create_signed(MblMwDataSignal* source, MblMwComparatorOperation op, MblMwComparatorMode mode, 
         float references[], uint8_t references_length, void *context, MblMwFnDataProcessor processor_created);
+
 /**
- * Create a multi-value comparator for unsigned comparisons.  This feature is only available on firmware v1.2.3 and later.  A pointer representing the 
- * processor will be passed back to the user via a callback function.
+ * Create a multi-value comparator for unsigned comparisons.  
+ * This feature is only available on firmware v1.2.3 and later.  
+ * A pointer representing the processor will be passed back to the user via a callback function.
  * @param source                Data signal providing the input
  * @param op                    Comparison operation to execute
  * @param mode                  Processor output mode
@@ -128,7 +139,8 @@ METAWEAR_API int32_t mbl_mw_dataprocessor_multi_comparator_create_unsigned(MblMw
         float references[], uint8_t references_length, void *context, MblMwFnDataProcessor processor_created);
 
 /**
- * Modifies the multi-value comparator, changing the operation and reference values.  This feature is only available on firmware v1.2.3 and later.
+ * Modifies the multi-value comparator, changing the operation and reference values.  
+ * This feature is only available on firmware v1.2.3 and later.
  * @param comparator            Comparator processor to modify
  * @param op                    New comparison operation
  * @param references            Array of new reference values

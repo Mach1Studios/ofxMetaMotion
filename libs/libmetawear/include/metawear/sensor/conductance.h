@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 /**
- * Enumeration of the available conductance measurment ranges
+ * Enumeration of the available conductance measurement ranges
  */
 typedef enum {
     MBL_MW_CONDUCTANCE_RANGE_50uS= 0,
@@ -20,7 +20,6 @@ typedef enum {
     MBL_MW_CONDUCTANCE_RANGE_150uS,
     MBL_MW_CONDUCTANCE_RANGE_200uS,
 } MblMwConductanceRange;
-
 
 /**
  * Retrieves the data signal representing a conductance source
@@ -42,7 +41,7 @@ METAWEAR_API uint8_t mbl_mw_conductance_get_num_channels(const MblMwMetaWearBoar
 METAWEAR_API void mbl_mw_conductance_calibrate(const MblMwMetaWearBoard *board);
 
 /**
- * Sets the conductance measurment mode
+ * Sets the conductance measurement mode
  * @param board     Pointer to the board to modify
  * @param range     Range of the conductance values
  */
