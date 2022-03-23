@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-const uint8_t MBL_MW_MODULE_ACC_TYPE_MMA8452Q = 0;          ///< Constant identifying the MMA8452Q accelerometer type
+//const uint8_t MBL_MW_MODULE_ACC_TYPE_MMA8452Q = 0;          ///< Constant identifying the MMA8452Q accelerometer type
 
 /*
 typedef enum {
