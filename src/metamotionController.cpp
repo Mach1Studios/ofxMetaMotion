@@ -282,15 +282,10 @@ string HighLow2Uuid(const uint64_t high, const uint64_t low){
 void metamotionController::read_gatt_char(void *context, const void *caller, const MblMwGattChar *characteristic,
                                           MblMwFnIntVoidPtrArray handler) {
     auto *wrapper = static_cast<metamotionController *>(context);
-    wrapper->copiedHandler = handler;
-    
+
     wrapper->nativeble.ble.read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&, handler, caller](const uint8_t* data, uint32_t length) {
-        try {
-            wrapper->copiedHandler(caller,data,length);
-        } catch (const std::exception& ex) {
-            cout << ex.what();
-        }
-    });
+        handler(caller,data,length);
+   });
 }
 
 

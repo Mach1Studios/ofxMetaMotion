@@ -70,7 +70,6 @@ public:
     nativebleInterface nativeble;
     int metaMotionDeviceIndex;
     std::vector<NativeBLE::DeviceDescriptor> devices;
-    MblMwFnIntVoidPtrArray copiedHandler;
     
     MblMwMetaWearBoard * board;
     void data_printer(void* context, const MblMwData* data);
