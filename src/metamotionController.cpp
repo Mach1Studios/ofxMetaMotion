@@ -57,12 +57,25 @@ void metamotionController::search() {
                     auto dev_info = mbl_mw_metawearboard_get_device_information(board);
                     std::cout << "firmware revision number = " << dev_info->firmware_revision << std::endl;
                     std::cout << "model = " << dev_info->model_number << std::endl;
+                    std::cout << "model = " << mbl_mw_metawearboard_get_model(board) << std::endl;
+                    std::cout << "model = " << mbl_mw_metawearboard_get_model_name(board) << std::endl;
                     auto *wrapper = static_cast<metamotionController *>(context);
                     wrapper->enable_fusion_sampling(wrapper->board);
                     wrapper->get_current_power_status(wrapper->board);
                     wrapper->get_battery_percentage(wrapper->board);
                     wrapper->get_ad_name(wrapper->board);
                 });
+                while (!mbl_mw_metawearboard_is_initialized(board)){
+                    // Wait for async initialization finishes
+                }
+                if (mbl_mw_metawearboard_is_initialized(board) == 1) {
+                    std::cout << "Status: " << mbl_mw_metawearboard_is_initialized(board) << std::endl;
+                    auto dev_info = mbl_mw_metawearboard_get_device_information(board);
+                    std::cout << "model = " << dev_info->model_number << std::endl;
+                    std::cout << "model = " << mbl_mw_metawearboard_get_model(board) << std::endl;
+                    std::cout << "model = " << mbl_mw_metawearboard_get_model_name(board) << std::endl;
+                    isConnected = true;
+                }
                 isSearching = false;
             }
         }
@@ -139,7 +152,6 @@ void metamotionController::configure_sensor_fusion(MblMwMetaWearBoard* board) {
     } else {
         mbl_mw_settings_set_tx_power(board, 4);
     }
-    isConnected = true;
 }
 
 void metamotionController::get_current_power_status(MblMwMetaWearBoard* board) {
