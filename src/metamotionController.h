@@ -22,7 +22,7 @@
 #include <sys/time.h>
 #endif
 
-#include "nativebleInterface.h"
+#include "bleInterface.h"
 
 #include "metawear/core/metawearboard.h"
 #include "metawear/core/module.h"

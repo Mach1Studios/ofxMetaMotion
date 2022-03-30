@@ -53,7 +53,13 @@ void metamotionController::search() {
                 btleConnection.enable_notifications = enable_char_notify;
                 btleConnection.on_disconnect = on_disconnect;
                 board = mbl_mw_metawearboard_create(&btleConnection);
+
                 mbl_mw_metawearboard_initialize(board, this, [](void* context, MblMwMetaWearBoard* board, int32_t status) -> void {
+                    if (!status) {
+                        printf("Error initializing board: %d\n", status);
+                    } else {
+                        printf("Board initialized\n");
+                    }
                     auto dev_info = mbl_mw_metawearboard_get_device_information(board);
                     std::cout << "firmware revision number = " << dev_info->firmware_revision << std::endl;
                     std::cout << "model = " << dev_info->model_number << std::endl;
