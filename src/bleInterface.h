@@ -5,7 +5,7 @@
 #include <csignal>
 #include <thread>
 
-#define SCAN_TIMEOUT_MS 2000
+#define SCAN_TIMEOUT_MS 3000
 
 #define NORDIC_UART_SERVICE_UUID "6e400001-b5a3-f393-e0a9-e50e24dcca9e"
 #define NORDIC_UART_CHAR_RX      "6e400002-b5a3-f393-e0a9-e50e24dcca9e"
@@ -42,7 +42,7 @@ public:
             devices.push_back(peripheral);
         });
 
-        // Scan for 5 seconds and return.
+        // Scan for 3 seconds and return.
         ble.scan_for(SCAN_TIMEOUT_MS);
 
         std::cout << "The following devices were found:" << std::endl;
@@ -84,6 +84,6 @@ public:
     }
     
     bool disconnect(int deviceIndex) {
-        devices[deviceIndex].connect();
+        devices[deviceIndex].disconnect();
     }
 };

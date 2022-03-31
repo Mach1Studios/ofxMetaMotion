@@ -67,9 +67,9 @@ public:
     const char* module_name;
     
     // ble
-    nativebleInterface nativeble;
+    bleInterface bleInterface;
     int metaMotionDeviceIndex;
-    std::vector<NativeBLE::DeviceDescriptor> devices;
+    std::vector<SimpleBLE::Peripheral> devices;
     
     MblMwMetaWearBoard * board;
     void data_printer(void* context, const MblMwData* data);

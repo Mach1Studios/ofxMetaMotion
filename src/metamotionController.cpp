@@ -26,25 +26,25 @@ metamotionController::~metamotionController() {
 //----------------------------------------------------- setup.
 void metamotionController::setup() {
     //getDeviceIDs();
-    nativeble.setup();
+    bleInterface.setup();
     resetOrientation();
     search();
 }
 
 void metamotionController::search() {
     isSearching = true;
-    if (!nativeble.connected){
+    if (!bleInterface.connected){
         isConnected = false;
-        if (nativeble.devices.size() < 1) { // if there are no found devices search again
-            nativeble.rescanDevices();
-        } else if (nativeble.devices.size() > 0){ // if there are found devices
-            nativeble.listDevices();
-            metaMotionDeviceIndex = nativeble.findMetaMotionDevice(); // store autofound index
+        if (bleInterface.devices.size() < 1) { // if there are no found devices search again
+            bleInterface.rescanDevices();
+        } else if (bleInterface.devices.size() > 0){ // if there are found devices
+            bleInterface.listDevices();
+            metaMotionDeviceIndex = bleInterface.findMetaMotionDevice(); // store autofound index
             if (metaMotionDeviceIndex == -1){ // but they are not MetaMotion search again
-                nativeble.listDevices();
-                nativeble.rescanDevices();
+                bleInterface.listDevices();
+                bleInterface.rescanDevices();
             } else if (metaMotionDeviceIndex > -1) { // connect to the first found device in case the above didnt work
-                nativeble.connect(metaMotionDeviceIndex);
+                bleInterface.connect(metaMotionDeviceIndex);
                 // setup meta motion
                 MblMwBtleConnection btleConnection;
                 btleConnection.context = this;
@@ -90,7 +90,7 @@ void metamotionController::search() {
 }
 
 void metamotionController::update(){
-    if(nativeble.connected){ // when connected section
+    if(bleInterface.connected){ // when connected section
         if (bUseMagnoHeading){
             angle[0] = outputEuler[0];
         } else {
@@ -114,7 +114,7 @@ void metamotionController::disconnectDevice(MblMwMetaWearBoard* board) {
     }
     isConnected = false;
     isSearching = false;
-    nativeble.exit();
+    bleInterface.exit();
 }
 
 void metamotionController::data_printer(void* context, const MblMwData* data) {
@@ -301,23 +301,29 @@ void metamotionController::read_gatt_char(void *context, const void *caller, con
                                           MblMwFnIntVoidPtrArray handler) {
     auto *wrapper = static_cast<metamotionController *>(context);
 
-    wrapper->nativeble.ble.read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&, handler, caller](const uint8_t* data, uint32_t length) {
-        handler(caller,data,length);
-   });
+    //TODO: Rewrite without searching for device index per call
+    auto readByteArray = wrapper->bleInterface.devices[wrapper->bleInterface.findMetaMotionDevice()].read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low));
+                                                     
+    handler(caller, (uint8_t*)readByteArray.data(), readByteArray.length());
+//    wrapper->nativeble.ble.read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&, handler, caller](const uint8_t* data, uint32_t length) {
+//        handler(caller,data,length);
+//    });
 }
 
 
 void metamotionController::write_gatt_char(void *context, const void *caller, MblMwGattCharWriteType writeType,
                                           const MblMwGattChar *characteristic, const uint8_t *value, uint8_t length){
     auto *wrapper = static_cast<metamotionController *>(context);
-    wrapper->nativeble.ble.write_command(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), std::string((char*)value, int(length)));
+    //TODO: Rewrite without searching for device index per call
+    wrapper->bleInterface.devices[wrapper->bleInterface.findMetaMotionDevice()].write_command(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), std::string((char*)value, int(length)));
 }
 
 
 void metamotionController::enable_char_notify(void *context, const void *caller, const MblMwGattChar *characteristic,
                                              MblMwFnIntVoidPtrArray handler, MblMwFnVoidVoidPtrInt ready) {
    auto *wrapper = static_cast<metamotionController *>(context);
-    wrapper->nativeble.ble.notify(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&,handler,caller](const uint8_t* data, uint32_t length) {
+    //TODO: Rewrite without searching for device index per call
+    wrapper->bleInterface.devices[wrapper->bleInterface.findMetaMotionDevice()].notify(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&,handler,caller](const uint8_t* data, uint32_t length) {
         handler(caller,data,length);
     });
     ready(caller, MBL_MW_STATUS_OK);
