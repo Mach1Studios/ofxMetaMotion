@@ -24,4 +24,5 @@ tvos:
 msys2:
 vs:
 	ADDON_LIBS += libs/libmetawear/lib/vs/x64/Release/MetaWear.Win32.lib
+	ADDON_LIBS += libs/libmetawear/lib/vs/x64/Release/MetaWear.Win32.dll
 	ADDON_LIBS += libs/libnativeble/lib/vs/x64/Release/nativeble-static.lib
