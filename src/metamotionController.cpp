@@ -323,7 +323,7 @@ void metamotionController::enable_char_notify(void *context, const void *caller,
                                              MblMwFnIntVoidPtrArray handler, MblMwFnVoidVoidPtrInt ready) {
    auto *wrapper = static_cast<metamotionController *>(context);
     //TODO: Rewrite without searching for device index per call
-    wrapper->bleInterface.devices[wrapper->bleInterface.findMetaMotionDevice()].notify(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&,handler,caller](ByteArray payload) {
+    wrapper->bleInterface.devices[wrapper->bleInterface.findMetaMotionDevice()].notify(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&,handler,caller](SimpleBLE::ByteArray payload) {
         handler(caller,(uint8_t*)payload.data(),payload.length());
     });
     ready(caller, MBL_MW_STATUS_OK);
