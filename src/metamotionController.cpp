@@ -174,7 +174,7 @@ void metamotionController::get_current_power_status(MblMwMetaWearBoard* board) {
     });
 }
 
-int metamotionController::get_battery_percentage(MblMwMetaWearBoard* board) {
+void metamotionController::get_battery_percentage(MblMwMetaWearBoard* board) {
     auto battery_signal = mbl_mw_settings_get_battery_state_data_signal(board);
     mbl_mw_datasignal_subscribe(battery_signal, this, [](void* context, const MblMwData* data) -> void {
         auto *wrapper = static_cast<metamotionController *>(context);

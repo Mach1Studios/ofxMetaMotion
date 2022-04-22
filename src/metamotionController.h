@@ -74,7 +74,7 @@ public:
     MblMwMetaWearBoard * board;
     void data_printer(void* context, const MblMwData* data);
     void get_current_power_status(MblMwMetaWearBoard* board);
-    int get_battery_percentage(MblMwMetaWearBoard* board);
+    void get_battery_percentage(MblMwMetaWearBoard* board);
     void configure_sensor_fusion(MblMwMetaWearBoard* board);
     void enable_fusion_sampling(MblMwMetaWearBoard* board);
     void disable_fusion_sampling(MblMwMetaWearBoard* board);
