@@ -31,37 +31,38 @@ public:
         
         if (ble_list.size() == 0) {
             std::cout << "No adapter was found." << std::endl;
+            return;
         }
 
-        ble.set_callback_on_scan_start([]() { std::cout << "Scan started." << std::endl; });
-
-        ble.set_callback_on_scan_stop([]() { std::cout << "Scan stopped." << std::endl; });
-
-        ble.set_callback_on_scan_found([&](SimpleBLE::Peripheral peripheral) {
-            std::cout << "Found device: " << peripheral.identifier() << " [" << peripheral.address() << "]" << std::endl;
-            devices.push_back(peripheral);
-        });
-
-        // Scan for 3 seconds and return.
-        ble.scan_for(SCAN_TIMEOUT_MS);
-
-        std::cout << "The following devices were found:" << std::endl;
-        for (int i = 0; i < devices.size(); i++) {
-            std::cout << "[" << i << "] " << devices[i].identifier() << " [" << devices[i].address() << "]"
-                      << std::endl;
-        }
+        rescanDevices();
     }
     
-    void exit() {
+    void exit(SimpleBLE::Adapter ble) {
         ble.scan_stop();
     }
-
+    
     void rescanDevices(){
-        ble.scan_for(SCAN_TIMEOUT_MS);
+        // Setup callback functions
+        ble_list = SimpleBLE::Adapter::get_adapters();
+        
+        if (ble_list.size() == 0) {
+            std::cout << "No adapter was found." << std::endl;
+            return;
+        }
+        
+        SimpleBLE::Adapter adapter = ble_list[0];
+
+        adapter.set_callback_on_scan_start([]() { std::cout << "Scan started." << std::endl; });
+        adapter.set_callback_on_scan_stop([]() { std::cout << "Scan stopped." << std::endl; });
+        adapter.set_callback_on_scan_found([this](SimpleBLE::Peripheral peripheral) {
+            std::cout << "Found device: " << peripheral.identifier() << " [" << peripheral.address() << "] " << peripheral.rssi() << " dBm" << std::endl;
+            devices.push_back(peripheral);
+        });
+        adapter.scan_for(SCAN_TIMEOUT_MS);
     }
     
     void listDevices(){
-        std::cout << devices.size() << " devices found:" << std::endl;
+        std::cout << "The following devices were found:" << std::endl;
         for (int i = 0; i < devices.size(); i++) {
             std::cout << "  " << i << ": " << devices[i].identifier() << " (" << devices[i].address() << ")" << std::endl;
         }
