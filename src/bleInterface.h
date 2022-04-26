@@ -84,7 +84,7 @@ public:
         return true;
     }
     
-    bool disconnect(int deviceIndex) {
+    void disconnect(int deviceIndex) {
         devices[deviceIndex].disconnect();
     }
 };
