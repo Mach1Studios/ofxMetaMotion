@@ -52,11 +52,12 @@ public:
     std::vector<string> getDeviceIDs();
     
     // ble connection functions
-    void search();
+    bool search(); // true if we start initializing
     bool isSearching = false;
     void connectDevice(int deviceID);
     void disconnectDevice(MblMwMetaWearBoard* board);
     bool isConnected = false;
+    bool currentlyInitializing = false;
     
     bool bUseMagnoHeading = true;
     float outputEuler[4];

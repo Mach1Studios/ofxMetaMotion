@@ -28,18 +28,23 @@ void metamotionController::setup() {
     //getDeviceIDs();
     bleInterface.setup();
     resetOrientation();
-    search();
+//    search();
 }
 
-void metamotionController::search() {
+bool metamotionController::search() {
     isSearching = true;
     if (!bleInterface.connected){
         isConnected = false;
         
+        // Looking for a device with "metamotion" in its name
         metaMotionDeviceIndex = bleInterface.findMetaMotionDevice(); // store autofound index
-        if (metaMotionDeviceIndex == -1){ // but they are not MetaMotion search again
+        if (metaMotionDeviceIndex == -1){
+            // didn't find any
+            // but they are not MetaMotion search again
             // rescan?
-        } else if (metaMotionDeviceIndex > -1) { // connect to the first found device in case the above didnt work
+        } else if (metaMotionDeviceIndex > -1) {
+            // found the device!
+            // connect to the first found device in case the above didnt work
             bleInterface.connect(metaMotionDeviceIndex);
             // setup meta motion
             MblMwBtleConnection btleConnection;
@@ -57,28 +62,28 @@ void metamotionController::search() {
                     printf("Board initialized\n");
                 }
                 auto dev_info = mbl_mw_metawearboard_get_device_information(board);
-                std::cout << "firmware revision number = " << dev_info->firmware_revision << std::endl;
-                std::cout << "model = " << dev_info->model_number << std::endl;
-                std::cout << "model = " << mbl_mw_metawearboard_get_model(board) << std::endl;
-                std::cout << "model = " << mbl_mw_metawearboard_get_model_name(board) << std::endl;
                 auto *wrapper = static_cast<metamotionController *>(context);
-                wrapper->enable_fusion_sampling(wrapper->board);
-                wrapper->get_current_power_status(wrapper->board);
-                wrapper->get_battery_percentage(wrapper->board);
-                wrapper->get_ad_name(wrapper->board);
+                
+                while (!mbl_mw_metawearboard_is_initialized(board)){
+                    // Wait for async initialization finishes
+                }
+                if (mbl_mw_metawearboard_is_initialized(board) == 1) {
+                    std::cout << "firmware revision number = " << dev_info->firmware_revision << std::endl;
+                    std::cout << "model = " << dev_info->model_number << std::endl;
+                    std::cout << "model = " << mbl_mw_metawearboard_get_model(board) << std::endl;
+                    std::cout << "model = " << mbl_mw_metawearboard_get_model_name(board) << std::endl;
+
+                    wrapper->enable_fusion_sampling(wrapper->board);
+                    wrapper->get_current_power_status(wrapper->board);
+                    wrapper->get_battery_percentage(wrapper->board);
+                    wrapper->get_ad_name(wrapper->board);
+                    wrapper->isConnected = true;
+                    wrapper->currentlyInitializing = false;
+                }
             });
-            while (!mbl_mw_metawearboard_is_initialized(board)){
-                // Wait for async initialization finishes
-            }
-            if (mbl_mw_metawearboard_is_initialized(board) == 1) {
-                std::cout << "Status: " << mbl_mw_metawearboard_is_initialized(board) << std::endl;
-                auto dev_info = mbl_mw_metawearboard_get_device_information(board);
-                std::cout << "model = " << dev_info->model_number << std::endl;
-                std::cout << "model = " << mbl_mw_metawearboard_get_model(board) << std::endl;
-                std::cout << "model = " << mbl_mw_metawearboard_get_model_name(board) << std::endl;
-                isConnected = true;
-            }
+            
             isSearching = false;
+            return true;
         }
         
         if (bleInterface.devices.size() < 1) { // if there are no found devices search again
@@ -90,6 +95,7 @@ void metamotionController::search() {
 //        }
     }
     isSearching = false;
+    return false;
 }
 
 void metamotionController::update(){
