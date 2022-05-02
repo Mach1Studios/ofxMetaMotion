@@ -69,7 +69,7 @@ public:
     
     // ble
     bleInterface bleInterface;
-    int metaMotionDeviceIndex;
+    int metaMotionDeviceIndex = -1;
     std::vector<SimpleBLE::Peripheral> devices;
     
     MblMwMetaWearBoard * board;

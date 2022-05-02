@@ -89,10 +89,6 @@ bool metamotionController::search() {
         if (bleInterface.devices.size() < 1) { // if there are no found devices search again
             bleInterface.rescanDevices();
         }
-//        else if (bleInterface.devices.size() > 0){ // if there are found devices
-//            bleInterface.listDevices();
-//            metaMotionDeviceIndex = bleInterface.findMetaMotionDevice(); // store autofound index
-//        }
     }
     isSearching = false;
     return false;
@@ -309,33 +305,31 @@ string HighLow2Uuid(const uint64_t high, const uint64_t low){
 void metamotionController::read_gatt_char(void *context, const void *caller, const MblMwGattChar *characteristic,
                                           MblMwFnIntVoidPtrArray handler) {
     auto *wrapper = static_cast<metamotionController *>(context);
-
-    //TODO: Rewrite without searching for device index per call
-    auto readByteArray = wrapper->bleInterface.devices[wrapper->bleInterface.findMetaMotionDevice()].read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low));
+    if (wrapper->metaMotionDeviceIndex != -1) {
+        auto readByteArray = wrapper->bleInterface.devices[wrapper->metaMotionDeviceIndex].read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low));
                                                      
-    handler(caller, (uint8_t*)readByteArray.data(), readByteArray.length());
-//    wrapper->nativeble.ble.read(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&, handler, caller](const uint8_t* data, uint32_t length) {
-//        handler(caller,data,length);
-//    });
+        handler(caller, (uint8_t*)readByteArray.data(), readByteArray.length());
+    }
 }
-
 
 void metamotionController::write_gatt_char(void *context, const void *caller, MblMwGattCharWriteType writeType,
                                           const MblMwGattChar *characteristic, const uint8_t *value, uint8_t length){
     auto *wrapper = static_cast<metamotionController *>(context);
-    //TODO: Rewrite without searching for device index per call
-    wrapper->bleInterface.devices[wrapper->bleInterface.findMetaMotionDevice()].write_command(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), std::string((char*)value, int(length)));
+    if (wrapper->metaMotionDeviceIndex != -1) {
+        wrapper->bleInterface.devices[wrapper->metaMotionDeviceIndex].write_command(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), std::string((char*)value, int(length)));
+    }
 }
-
 
 void metamotionController::enable_char_notify(void *context, const void *caller, const MblMwGattChar *characteristic,
                                              MblMwFnIntVoidPtrArray handler, MblMwFnVoidVoidPtrInt ready) {
-   auto *wrapper = static_cast<metamotionController *>(context);
-    //TODO: Rewrite without searching for device index per call
-    wrapper->bleInterface.devices[wrapper->bleInterface.findMetaMotionDevice()].notify(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&,handler,caller](SimpleBLE::ByteArray payload) {
-        handler(caller,(uint8_t*)payload.data(),payload.length());
-    });
-    ready(caller, MBL_MW_STATUS_OK);
+
+    auto *wrapper = static_cast<metamotionController *>(context);
+    if (wrapper->metaMotionDeviceIndex != -1) {
+        wrapper->bleInterface.devices[wrapper->metaMotionDeviceIndex].notify(HighLow2Uuid(characteristic->service_uuid_high, characteristic->service_uuid_low), HighLow2Uuid(characteristic->uuid_high, characteristic->uuid_low), [&,handler,caller](SimpleBLE::ByteArray payload) {
+            handler(caller,(uint8_t*)payload.data(),payload.length());
+        });
+        ready(caller, MBL_MW_STATUS_OK);
+    }
 }
 
 void metamotionController::on_disconnect(void *context, const void *caller, MblMwFnVoidVoidPtrInt handler) {
