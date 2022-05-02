@@ -8,7 +8,6 @@ meta:
 common:
 	ADDON_INCLUDES += libs/libmetawear/include
 	ADDON_INCLUDES += libs/libsimpleble/include
-	ADDON_INCLUDES += src
 linux:
 linux64:
 linuxarmv6l:
