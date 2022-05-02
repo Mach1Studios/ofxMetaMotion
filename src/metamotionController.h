@@ -22,7 +22,7 @@
 #include <sys/time.h>
 #endif
 
-#include "nativebleInterface.h"
+#include "bleInterface.h"
 
 #include "metawear/core/metawearboard.h"
 #include "metawear/core/module.h"
@@ -52,11 +52,12 @@ public:
     std::vector<string> getDeviceIDs();
     
     // ble connection functions
-    void search();
+    bool search(); // true if we start initializing
     bool isSearching = false;
     void connectDevice(int deviceID);
     void disconnectDevice(MblMwMetaWearBoard* board);
     bool isConnected = false;
+    bool currentlyInitializing = false;
     
     bool bUseMagnoHeading = true;
     float outputEuler[4];
@@ -67,9 +68,9 @@ public:
     const char* module_name;
     
     // ble
-    nativebleInterface nativeble;
-    int metaMotionDeviceIndex;
-    std::vector<NativeBLE::DeviceDescriptor> devices;
+    bleInterface bleInterface;
+    int metaMotionDeviceIndex = -1;
+    std::vector<SimpleBLE::Peripheral> devices;
     
     MblMwMetaWearBoard * board;
     void data_printer(void* context, const MblMwData* data);

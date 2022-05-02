@@ -44,13 +44,19 @@ typedef enum {
 
 /**
  * Retrieves the data signal representing a temperature source
+ * The temperature is in C by default
+ * The temperature sensor can by the selected; it can be the on die sensor that is built in to the MCU, 
+ * the on board thermistor, an external thermistor added to the GPIOs of the board or the BMP280.
+ * Each board comes with a different configuration of temperature sensors, refer to the datasheet of your MetaWear.
  * @param board     Board to retrieve the signal from
  * @param channel   Channel ID of the temperature source
+ * INT32 is return signal data type 
  */
 METAWEAR_API MblMwDataSignal* mbl_mw_multi_chnl_temp_get_temperature_data_signal(const MblMwMetaWearBoard *board, uint8_t channel);
 
 /**
  * Configure the external thermistor
+ * If a thermistor is added to the GPIOs of the MetaWear, this function will enable the configuration
  * @param board             Board the external thermistor is attached to
  * @param channel           Channel ID of the external thermistor 
  * @param data_pin          GPIO pin reading the data
@@ -67,6 +73,7 @@ METAWEAR_API void mbl_mw_multi_chnl_temp_configure_ext_thermistor(const MblMwMet
  * @return Source type of the channel ID, MBL_MW_TEMP_SOURCE_INVALID if channel ID is out of range
  */
 METAWEAR_API MblMwTemperatureSource mbl_mw_multi_chnl_temp_get_source(const MblMwMetaWearBoard *board, uint8_t channel);
+
 /**
  * Retrieve the number of available channels
  * @return Number of channel IDs

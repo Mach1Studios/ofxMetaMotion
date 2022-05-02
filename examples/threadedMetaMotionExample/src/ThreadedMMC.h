@@ -23,11 +23,6 @@ public:
 
     void setup(){
         mmc.setup();
-        start();
-    }
-
-    /// Start the thread.
-    void start(){
         startThread();
     }
 
@@ -40,14 +35,15 @@ public:
 
     void threadedFunction(){
         while(isThreadRunning()){
-            if (!mmc.isConnected && !mmc.isSearching){
-                mmc.search();
+            if (!mmc.isConnected && !mmc.isSearching &&
+                !mmc.currentlyInitializing){
+                mmc.currentlyInitializing  = mmc.search();
             }
             mmc.update();
             threadFrameNum++;
         }
     }
-
+    
     int getThreadFrameNum(){
         return threadFrameNum;
     }
