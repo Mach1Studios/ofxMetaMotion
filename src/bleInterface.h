@@ -27,7 +27,11 @@ public:
 
     void setup() {
         // Setup callback functions
-        ble_list = SimpleBLE::Adapter::get_adapters();
+        try{
+            ble_list = SimpleBLE::Adapter::get_adapters();
+        } catch (...) {
+            throw;
+        }
         
         if (ble_list.size() == 0) {
             std::cout << "No adapter was found." << std::endl;
@@ -43,22 +47,30 @@ public:
     
     void rescanDevices(){
         // Setup callback functions
-        ble_list = SimpleBLE::Adapter::get_adapters();
+        try {
+            ble_list = SimpleBLE::Adapter::get_adapters();
+        } catch (...) {
+            throw;
+        }
         
         if (ble_list.size() == 0) {
             std::cout << "No adapter was found." << std::endl;
             return;
         }
         
-        SimpleBLE::Adapter adapter = ble_list[0];
+        try {
+            SimpleBLE::Adapter adapter = ble_list[0];
 
-        adapter.set_callback_on_scan_start([]() { std::cout << "Scan started." << std::endl; });
-        adapter.set_callback_on_scan_stop([]() { std::cout << "Scan stopped." << std::endl; });
-        adapter.set_callback_on_scan_found([this](SimpleBLE::Peripheral peripheral) {
-            std::cout << "Found device: " << peripheral.identifier() << " [" << peripheral.address() << "] " << peripheral.rssi() << " dBm" << std::endl;
-            devices.push_back(peripheral);
-        });
-        adapter.scan_for(SCAN_TIMEOUT_MS);
+            adapter.set_callback_on_scan_start([]() { std::cout << "Scan started." << std::endl; });
+            adapter.set_callback_on_scan_stop([]() { std::cout << "Scan stopped." << std::endl; });
+            adapter.set_callback_on_scan_found([this](SimpleBLE::Peripheral peripheral) {
+                std::cout << "Found device: " << peripheral.identifier() << " [" << peripheral.address() << "] " << peripheral.rssi() << " dBm" << std::endl;
+                devices.push_back(peripheral);
+            });
+            adapter.scan_for(SCAN_TIMEOUT_MS);
+        } catch (...) {
+            throw;
+        }
     }
     
     void listDevices(){
